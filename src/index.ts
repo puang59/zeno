@@ -37,6 +37,20 @@ function getToolDefinitions() {
   }));
 }
 
+async function askLLM(message: OpenAI.ChatCompletionMessageParam[]) {
+  const response = await openai.chat.completions.create({
+    model: "deepseek-ai/DeepSeek-V4-Flash",
+    messages: message,
+    tools: getToolDefinitions(),
+    tool_choice: "auto",
+  });
+  const responseMessage = response.choices[0]?.message;
+  if (!responseMessage) {
+    throw new Error("No response message from LLM");
+  }
+  return responseMessage;
+}
+
 async function main() {
   const message: OpenAI.ChatCompletionMessageParam[] = [
     {
@@ -45,22 +59,19 @@ async function main() {
         "list the files in directory /Users/puang/code-agent/ also can you tell me the content of the file /Users/puang/code-agent/src/index.ts - answer in short btw",
     },
   ];
-
   console.log(`[USER] \n${message[0]?.content} \n`);
 
-  const response = await openai.chat.completions.create({
-    model: "deepseek-ai/DeepSeek-V4-Flash",
-    messages: message,
-    tools: getToolDefinitions(),
-    tool_choice: "auto",
-  });
+  while (true) {
+    const responseMessage = await askLLM(message);
+    message.push(responseMessage);
 
-  const responseMessage = response.choices[0]?.message;
-  if (!responseMessage) {
-    throw new Error("No response message from LLM");
-  }
-  // extracting tool calls from the response message
-  if (responseMessage.tool_calls) {
+    // no further tool calls
+    if (!responseMessage.tool_calls?.length) {
+      console.log("\n[DEEPSEEK] \n" + responseMessage.content);
+      break;
+    }
+
+    // execute tool calls
     for (const toolCall of responseMessage.tool_calls) {
       if (toolCall.type !== "function") {
         throw new Error(`Unexpected tool call type: ${toolCall.type}`);
@@ -72,7 +83,6 @@ async function main() {
       console.log(`---- calling tool: ${toolName} ----`);
 
       const toolResponse = await calltool(toolName, toolArgs);
-      message.push(responseMessage);
       message.push({
         role: "tool",
         tool_call_id: toolCall.id,
@@ -80,15 +90,6 @@ async function main() {
       });
     }
   }
-
-  const finalResponse = await openai.chat.completions.create({
-    model: "deepseek-ai/DeepSeek-V4-Flash",
-    messages: message,
-    tools: getToolDefinitions(),
-    tool_choice: "auto",
-  });
-
-  console.log("\n[DEEPSEEK] \n" + finalResponse.choices[0]?.message?.content);
 }
 
 main();

@@ -1,12 +1,12 @@
-# milo
+# zeno
 
-milo is a terminal-native coding agent that runs on your machine and uses your local codebase, files, Git history, and development tools to investigate and work on your projects.
+zeno is a terminal-native coding agent that runs on your machine and uses your local codebase, files, Git history, and development tools to investigate and work on your projects.
 
 ## TODO
 
 ### Tools
 
-milo's capabilities are built around small tools that the agent can call when needed.
+zeno's capabilities are built around small tools that the agent can call when needed.
 
 #### FileSystem - Core
 
@@ -14,7 +14,7 @@ milo's capabilities are built around small tools that the agent can call when ne
 
 - [x] `list_files` - list files and directories
 - [x] `read_file` - read the contents of a file
-- [ ] `search_files` - search files for matching text or patterns
+- [x] `search_files` - search files for matching text or patterns
 - [ ] `file_exists` - check whether a file or directory exists
 - [ ] `get_file_info` - get file size, type, modification time, etc.
 

@@ -3,6 +3,7 @@ import OpenAI from "openai";
 import type { ToolArgs } from "../utils/types";
 import { listFilesTool } from "./tools/list-files";
 import { readFileTool } from "./tools/read-file";
+import { searchFilesTool } from "./tools/search-files";
 
 const openai = new OpenAI({
   apiKey: process.env.DEEPINFRA_TOKEN,
@@ -12,6 +13,7 @@ const openai = new OpenAI({
 const ToolsRegistry = {
   read_file: readFileTool,
   list_files: listFilesTool,
+  search_files: searchFilesTool,
 };
 type ToolName = keyof typeof ToolsRegistry;
 
@@ -52,11 +54,17 @@ async function askLLM(message: OpenAI.ChatCompletionMessageParam[]) {
 }
 
 async function main() {
+  const args = process.argv.slice(2);
+  const prompt = args.join(" ");
+  if (!prompt) {
+    console.error("Please provide a prompt as a command line argument.");
+    process.exit(1);
+  }
+
   const message: OpenAI.ChatCompletionMessageParam[] = [
     {
       role: "user",
-      content:
-        "list the files in directory /Users/puang/code-agent/ also can you tell me the content of the file /Users/puang/code-agent/src/index.ts - answer in short btw",
+      content: prompt,
     },
   ];
   console.log(`[USER] \n${message[0]?.content} \n`);
@@ -67,7 +75,7 @@ async function main() {
 
     // no further tool calls
     if (!responseMessage.tool_calls?.length) {
-      console.log("\n[DEEPSEEK] \n" + responseMessage.content);
+      console.log("\n[ZENO] \n" + responseMessage.content);
       break;
     }
 

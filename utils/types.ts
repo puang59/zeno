@@ -8,4 +8,5 @@ export type Tool = {
 export type ToolArgs = {
   filePath?: string;
   directoryPath?: string;
+  query?: string;
 };

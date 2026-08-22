@@ -1,24 +1,20 @@
+import { z } from "zod";
 import type { Tool } from "../../utils/types";
 
-export const getFileInfoTool: Tool = {
+const getFileInfoSchema = z.object({
+  filePath: z
+    .string()
+    .describe("The path to the file to retrieve information about."),
+});
+
+export const getFileInfoTool: Tool<typeof getFileInfoSchema> = {
   name: "get_file_info",
   description:
     "Retrieves information about a file, including its size, creation date, and last modified date.",
-  inputSchema: {
-    type: "object",
-    properties: {
-      filePath: {
-        type: "string",
-        description: "The path to the file to retrieve information about.",
-      },
-    },
-    required: ["filePath"],
-  },
-  async execute(args): Promise<string> {
-    if (!args.filePath) {
-      throw new Error("filePath argument is required.");
-    }
 
+  inputSchema: getFileInfoSchema,
+
+  async execute(args): Promise<string> {
     try {
       const fs = require("fs").promises;
       const stats = await fs.stat(args.filePath);

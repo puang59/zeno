@@ -1,26 +1,20 @@
+import { z } from "zod";
 import type { Tool } from "../../utils/types";
 
-export const listFilesTool: Tool = {
+const listFilesSchema = z.object({
+  directoryPath: z
+    .string()
+    .describe("The path to the directory whose files are to be listed."),
+});
+
+export const listFilesTool: Tool<typeof listFilesSchema> = {
   name: "list_files",
   description:
     "Lists all files in a specified directory and returns their names as a string.",
 
-  inputSchema: {
-    type: "object",
-    properties: {
-      directoryPath: {
-        type: "string",
-        description: "The path to the directory whose files are to be listed.",
-      },
-    },
-    required: ["directoryPath"],
-  },
+  inputSchema: listFilesSchema,
 
   async execute(args): Promise<string> {
-    if (!args.directoryPath) {
-      throw new Error("directoryPath argument is required.");
-    }
-
     const { directoryPath } = args;
     const fs = require("fs").promises;
 

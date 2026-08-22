@@ -1,25 +1,20 @@
 import type { Tool } from "../../utils/types";
 import { IGNORED_DIRECTORIES } from "../../utils/consts";
+import { z } from "zod";
 
-export const searchFilesTool: Tool = {
+const searchFilesSchema = z.object({
+  directoryPath: z
+    .string()
+    .describe("The path to the directory to search for files."),
+  query: z.string().describe("The search query to filter files (optional)."),
+});
+
+export const searchFilesTool: Tool<typeof searchFilesSchema> = {
   name: "search_files",
   description:
     "Searches for files in a specified directory and returns a list of matching file paths based on the provided query.",
 
-  inputSchema: {
-    type: "object",
-    properties: {
-      directoryPath: {
-        type: "string",
-        description: "The path to the directory to search for files.",
-      },
-      query: {
-        type: "string",
-        description: "The search query to filter files (optional).",
-      },
-    },
-    required: ["directoryPath", "query"],
-  },
+  inputSchema: searchFilesSchema,
 
   async execute(args): Promise<string> {
     if (!args.directoryPath) {

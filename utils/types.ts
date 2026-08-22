@@ -1,12 +1,8 @@
-export type Tool = {
+import type { z } from "zod";
+
+export type Tool<TArgs extends z.ZodType> = {
   name: string;
   description: string;
-  inputSchema: Record<string, unknown>; // for LLM
-  execute: (args: ToolArgs) => Promise<string>; // for program
-};
-
-export type ToolArgs = {
-  filePath?: string;
-  directoryPath?: string;
-  query?: string;
+  inputSchema: TArgs; // for LLM
+  execute: (args: z.infer<TArgs>) => Promise<string>; // for program
 };

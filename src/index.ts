@@ -2,12 +2,12 @@ import OpenAI from "openai";
 import pc from "picocolors";
 import cliMD from "cli-markdown";
 
-import type { ToolArgs } from "../utils/types";
 import { listFilesTool } from "./tools/list-files";
 import { readFileTool } from "./tools/read-file";
 import { searchFilesTool } from "./tools/search-files";
 import { fileExistsTool } from "./tools/file-exists";
 import { getFileInfoTool } from "./tools/get-file-info";
+import { z } from "zod";
 
 const openai = new OpenAI({
   apiKey: process.env.DEEPINFRA_TOKEN,
@@ -23,13 +23,15 @@ const ToolsRegistry = {
 };
 type ToolName = keyof typeof ToolsRegistry;
 
-async function calltool(toolname: ToolName, args: ToolArgs) {
+async function calltool(toolname: ToolName, args: unknown) {
   const tool = ToolsRegistry[toolname];
   if (!tool) {
     throw new Error(`Tool ${toolname} not found in registry`);
   }
 
-  return await tool.execute(args);
+  const parsedArgs = tool.inputSchema.parse(args);
+
+  return await (tool.execute as (args: unknown) => Promise<string>)(parsedArgs);
 }
 
 // to avoid sending ToolsRegistry along with execute
@@ -40,7 +42,7 @@ function getToolDefinitions() {
     function: {
       name: tool.name,
       description: tool.description,
-      parameters: tool.inputSchema,
+      parameters: z.toJSONSchema(tool.inputSchema),
     },
   }));
 }

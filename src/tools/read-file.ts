@@ -1,25 +1,17 @@
+import { z } from "zod";
 import type { Tool } from "../../utils/types";
 
-export const readFileTool: Tool = {
+const readFileSchema = z.object({
+  filePath: z.string().describe("The path to the file to be read."),
+});
+
+export const readFileTool: Tool<typeof readFileSchema> = {
   name: "read_file",
   description: "Reads the content of a file and returns it as a string.",
 
-  inputSchema: {
-    type: "object",
-    properties: {
-      filePath: {
-        type: "string",
-        description: "The path to the file to be read.",
-      },
-    },
-    required: ["filePath"],
-  },
+  inputSchema: readFileSchema,
 
   async execute(args): Promise<string> {
-    if (!args.filePath) {
-      throw new Error("filePath argument is required.");
-    }
-
     const { filePath } = args;
 
     const fs = require("fs").promises;

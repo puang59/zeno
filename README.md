@@ -16,7 +16,7 @@ zeno's capabilities are built around small tools that the agent can call when ne
 - [x] `read_file` - read the contents of a file
 - [x] `search_files` - search files for matching text or patterns
 - [x] `file_exists` - check whether a file or directory exists
-- [ ] `get_file_info` - get file size, type, modification time, etc.
+- [x] `get_file_info` - get file size, type, modification time, etc.
 
 ##### Write
 

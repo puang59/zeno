@@ -7,6 +7,7 @@ import { listFilesTool } from "./tools/list-files";
 import { readFileTool } from "./tools/read-file";
 import { searchFilesTool } from "./tools/search-files";
 import { fileExistsTool } from "./tools/file-exists";
+import { getFileInfoTool } from "./tools/get-file-info";
 
 const openai = new OpenAI({
   apiKey: process.env.DEEPINFRA_TOKEN,
@@ -18,6 +19,7 @@ const ToolsRegistry = {
   list_files: listFilesTool,
   search_files: searchFilesTool,
   file_exists: fileExistsTool,
+  get_file_info: getFileInfoTool,
 };
 type ToolName = keyof typeof ToolsRegistry;
 
@@ -72,20 +74,18 @@ async function main() {
     },
   ];
   console.log(
-    `${pc.bgBlue(pc.black(pc.bold("[USER]")))} \n${message[0]?.content}`,
+    `${pc.bgBlue(pc.black(pc.bold("[USER]")))} \n${message[0]?.content}\n`,
   );
 
   while (true) {
     const responseMessage = await askLLM(message);
-    // console.log(responseMessage.content);
-    // console.dir(responseMessage, { depth: null });
 
     message.push(responseMessage);
 
     // no further tool calls
     if (!responseMessage.tool_calls?.length) {
       console.log(
-        `${pc.bgYellow(pc.black(pc.bold("[ZENO]")))}\n` +
+        `\n${pc.bgYellow(pc.black(pc.bold("[ZENO]")))}` +
           cliMD(responseMessage.content ?? ""),
       );
       break;

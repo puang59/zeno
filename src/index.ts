@@ -4,6 +4,7 @@ import type { ToolArgs } from "../utils/types";
 import { listFilesTool } from "./tools/list-files";
 import { readFileTool } from "./tools/read-file";
 import { searchFilesTool } from "./tools/search-files";
+import { fileExistsTool } from "./tools/file-exists";
 
 const openai = new OpenAI({
   apiKey: process.env.DEEPINFRA_TOKEN,
@@ -14,6 +15,7 @@ const ToolsRegistry = {
   read_file: readFileTool,
   list_files: listFilesTool,
   search_files: searchFilesTool,
+  file_exists: fileExistsTool,
 };
 type ToolName = keyof typeof ToolsRegistry;
 
@@ -71,6 +73,9 @@ async function main() {
 
   while (true) {
     const responseMessage = await askLLM(message);
+    // console.log(responseMessage.content);
+    // console.dir(responseMessage, { depth: null });
+
     message.push(responseMessage);
 
     // no further tool calls

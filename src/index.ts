@@ -18,12 +18,10 @@ type ToolName = keyof typeof ToolsRegistry;
 async function calltool(toolname: ToolName, args: ToolArgs) {
   const tool = ToolsRegistry[toolname];
   if (!tool) {
-    console.error(`tool ${toolname} not found!`);
-    return;
+    throw new Error(`Tool ${toolname} not found in registry`);
   }
 
-  const result = await tool.execute(args);
-  console.log(result);
+  return await tool.execute(args);
 }
 
 // to avoid sending ToolsRegistry along with execute
@@ -44,9 +42,11 @@ async function main() {
     {
       role: "user",
       content:
-        "list the files in directory /Users/puang/code-agent/ also can you tell me the content of the file /Users/puang/code-agent/src/index.ts",
+        "list the files in directory /Users/puang/code-agent/ also can you tell me the content of the file /Users/puang/code-agent/src/index.ts - answer in short btw",
     },
   ];
+
+  console.log(`[USER] \n${message[0]?.content} \n`);
 
   const response = await openai.chat.completions.create({
     model: "deepseek-ai/DeepSeek-V4-Flash",
@@ -54,14 +54,11 @@ async function main() {
     tools: getToolDefinitions(),
     tool_choice: "auto",
   });
-  // console.log(response.choices[0]?.message?.content);
-  // console.dir(response.choices[0]?.message, { depth: null });
 
   const responseMessage = response.choices[0]?.message;
   if (!responseMessage) {
     throw new Error("No response message from LLM");
   }
-
   // extracting tool calls from the response message
   if (responseMessage.tool_calls) {
     for (const toolCall of responseMessage.tool_calls) {
@@ -72,9 +69,26 @@ async function main() {
       const toolName = toolCall.function.name as ToolName;
       const toolArgs = JSON.parse(toolCall.function.arguments);
 
-      await calltool(toolName, toolArgs);
+      console.log(`---- calling tool: ${toolName} ----`);
+
+      const toolResponse = await calltool(toolName, toolArgs);
+      message.push(responseMessage);
+      message.push({
+        role: "tool",
+        tool_call_id: toolCall.id,
+        content: toolResponse,
+      });
     }
   }
+
+  const finalResponse = await openai.chat.completions.create({
+    model: "deepseek-ai/DeepSeek-V4-Flash",
+    messages: message,
+    tools: getToolDefinitions(),
+    tool_choice: "auto",
+  });
+
+  console.log("\n[DEEPSEEK] \n" + finalResponse.choices[0]?.message?.content);
 }
 
 main();

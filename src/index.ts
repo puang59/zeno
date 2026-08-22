@@ -1,4 +1,6 @@
 import OpenAI from "openai";
+import pc from "picocolors";
+import cliMD from "cli-markdown";
 
 import type { ToolArgs } from "../utils/types";
 import { listFilesTool } from "./tools/list-files";
@@ -69,7 +71,9 @@ async function main() {
       content: prompt,
     },
   ];
-  console.log(`[USER] \n${message[0]?.content} \n`);
+  console.log(
+    `${pc.bgBlue(pc.black(pc.bold("[USER]")))} \n${message[0]?.content}`,
+  );
 
   while (true) {
     const responseMessage = await askLLM(message);
@@ -80,7 +84,10 @@ async function main() {
 
     // no further tool calls
     if (!responseMessage.tool_calls?.length) {
-      console.log("\n[ZENO] \n" + responseMessage.content);
+      console.log(
+        `${pc.bgYellow(pc.black(pc.bold("[ZENO]")))}\n` +
+          cliMD(responseMessage.content ?? ""),
+      );
       break;
     }
 
@@ -93,7 +100,7 @@ async function main() {
       const toolName = toolCall.function.name as ToolName;
       const toolArgs = JSON.parse(toolCall.function.arguments);
 
-      console.log(`---- calling tool: ${toolName} ----`);
+      console.log(`${pc.dim(`---- calling tool: ${pc.bold(toolName)} ----`)}`);
 
       const toolResponse = await calltool(toolName, toolArgs);
       message.push({

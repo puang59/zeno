@@ -11,6 +11,7 @@ import { getFileInfoTool } from "./tools/filesystem/get-file-info";
 import { writeFileTool } from "./tools/filesystem/write-file";
 import { deleteFileTool } from "./tools/filesystem/delete-file";
 import { moveFileTool } from "./tools/filesystem/move-file";
+import { createDirectoryTool } from "./tools/filesystem/create-directory";
 
 const openai = new OpenAI({
   apiKey: process.env.DEEPINFRA_TOKEN,
@@ -29,6 +30,7 @@ const ToolsRegistry = {
   write_file: writeFileTool,
   delete_file: deleteFileTool,
   move_file: moveFileTool,
+  create_directory: createDirectoryTool,
 };
 type ToolName = keyof typeof ToolsRegistry;
 

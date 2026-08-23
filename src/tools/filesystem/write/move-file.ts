@@ -1,4 +1,4 @@
-import type { Tool } from "../../../utils/types";
+import type { Tool } from "../../../../utils/types";
 import { rename } from "node:fs/promises";
 import { z } from "zod";
 

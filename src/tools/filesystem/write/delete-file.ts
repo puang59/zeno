@@ -1,5 +1,5 @@
-import type { Tool } from "../../../utils/types";
-import deleteFile from "node:fs/promises";
+import type { Tool } from "../../../../utils/types";
+import { unlink } from "node:fs/promises";
 import { z } from "zod";
 
 const deleteFileSchema = z.object({
@@ -16,7 +16,7 @@ export const deleteFileTool: Tool<typeof deleteFileSchema> = {
     const { filePath } = args;
 
     try {
-      await deleteFile.unlink(filePath);
+      await unlink(filePath);
       return `Successfully deleted file at ${filePath}.`;
     } catch (error) {
       if (error instanceof Error) {

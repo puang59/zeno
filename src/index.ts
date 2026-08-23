@@ -8,10 +8,11 @@ import { readFileTool } from "./tools/filesystem/read-file";
 import { searchFilesTool } from "./tools/filesystem/search-files";
 import { fileExistsTool } from "./tools/filesystem/file-exists";
 import { getFileInfoTool } from "./tools/filesystem/get-file-info";
-import { writeFileTool } from "./tools/filesystem/write-file";
-import { deleteFileTool } from "./tools/filesystem/delete-file";
-import { moveFileTool } from "./tools/filesystem/move-file";
-import { createDirectoryTool } from "./tools/filesystem/create-directory";
+import { writeFileTool } from "./tools/filesystem/write/write-file";
+import { deleteFileTool } from "./tools/filesystem/write/delete-file";
+import { moveFileTool } from "./tools/filesystem/write/move-file";
+import { createDirectoryTool } from "./tools/filesystem/write/create-directory";
+import { getCurrentDirectoryTool } from "./tools/filesystem/get-current-directory";
 
 const openai = new OpenAI({
   apiKey: process.env.DEEPINFRA_TOKEN,
@@ -25,6 +26,7 @@ const ToolsRegistry = {
   search_files: searchFilesTool,
   file_exists: fileExistsTool,
   get_file_info: getFileInfoTool,
+  get_current_directory: getCurrentDirectoryTool,
 
   // write-only
   write_file: writeFileTool,
@@ -40,9 +42,19 @@ async function calltool(toolname: ToolName, args: unknown) {
     throw new Error(`Tool ${toolname} not found in registry`);
   }
 
-  const parsedArgs = tool.inputSchema.parse(args);
+  // so that zeno doesnt die if the tool fails, we catch the error and return it as a string
+  try {
+    const parsedArgs = tool.inputSchema.parse(args);
+    return await (tool.execute as (args: unknown) => Promise<string>)(
+      parsedArgs,
+    );
+  } catch (error) {
+    if (error instanceof Error) {
+      return `Tool "${toolname}" failed: ${error.message}`;
+    }
 
-  return await (tool.execute as (args: unknown) => Promise<string>)(parsedArgs);
+    return `Tool "${toolname}" failed with an unknown error.`;
+  }
 }
 
 // to avoid sending ToolsRegistry along with execute

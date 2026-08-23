@@ -13,6 +13,7 @@ import { deleteFileTool } from "./tools/filesystem/write/delete-file";
 import { moveFileTool } from "./tools/filesystem/write/move-file";
 import { createDirectoryTool } from "./tools/filesystem/write/create-directory";
 import { getCurrentDirectoryTool } from "./tools/filesystem/read/get-current-directory";
+import { gitStatusTool } from "./tools/git/git-status";
 
 const openai = new OpenAI({
   apiKey: process.env.DEEPINFRA_TOKEN,
@@ -33,6 +34,9 @@ const ToolsRegistry = {
   delete_file: deleteFileTool,
   move_file: moveFileTool,
   create_directory: createDirectoryTool,
+
+  // git
+  git_status: gitStatusTool,
 };
 type ToolName = keyof typeof ToolsRegistry;
 
@@ -94,13 +98,33 @@ async function main() {
 
   const message: OpenAI.ChatCompletionMessageParam[] = [
     {
+      role: "system",
+      content: `
+You are Zeno, a terminal-native coding agent.
+
+You have access to tools that let you inspect and modify the user's local codebase.
+
+Use tools whenever the user's question requires information about the current
+filesystem, Git repository, source code, project configuration, or environment.
+
+Do not assume information about the current codebase from your own knowledge.
+Inspect the codebase when necessary.
+
+When the user asks about changes, additions, modifications, or the current state
+of the project, use the appropriate tools to investigate before answering.
+
+If you are unsure whether information is available in the current project,
+prefer inspecting the project with tools rather than saying you cannot know.
+
+You may call multiple tools when necessary to answer a question accurately.
+`,
+    },
+    {
       role: "user",
       content: prompt,
     },
   ];
-  console.log(
-    `${pc.bgBlue(pc.black(pc.bold("[USER]")))} \n${message[0]?.content}\n`,
-  );
+  console.log(`${pc.bgBlue(pc.black(pc.bold("[USER]")))} \n${prompt}\n`);
 
   while (true) {
     const responseMessage = await askLLM(message);
@@ -125,7 +149,25 @@ async function main() {
       const toolName = toolCall.function.name as ToolName;
       const toolArgs = JSON.parse(toolCall.function.arguments);
 
-      console.log(`${pc.dim(`---- calling tool: ${pc.bold(toolName)} ----`)}`);
+      if (
+        toolName === "read_file" ||
+        toolName === "write_file" ||
+        toolName === "delete_file" ||
+        toolName === "move_file" ||
+        toolName === "get_file_info"
+      ) {
+        console.log(
+          `${pc.dim(`---- calling tool: ${pc.bold(toolName)} [${toolArgs.filePath}] ----`)}`,
+        );
+      } else if (toolName === "list_files" || toolName === "search_files") {
+        console.log(
+          `${pc.dim(`---- calling tool: ${pc.bold(toolName)} [${toolArgs.directoryPath}] ----`)}`,
+        );
+      } else {
+        console.log(
+          `${pc.dim(`---- calling tool: ${pc.bold(toolName)} ----`)}`,
+        );
+      }
 
       const toolResponse = await calltool(toolName, toolArgs);
       message.push({

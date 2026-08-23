@@ -10,6 +10,7 @@ import { fileExistsTool } from "./tools/filesystem/file-exists";
 import { getFileInfoTool } from "./tools/filesystem/get-file-info";
 import { writeFileTool } from "./tools/filesystem/write-file";
 import { deleteFileTool } from "./tools/filesystem/delete-file";
+import { moveFileTool } from "./tools/filesystem/move-file";
 
 const openai = new OpenAI({
   apiKey: process.env.DEEPINFRA_TOKEN,
@@ -27,6 +28,7 @@ const ToolsRegistry = {
   // write-only
   write_file: writeFileTool,
   delete_file: deleteFileTool,
+  move_file: moveFileTool,
 };
 type ToolName = keyof typeof ToolsRegistry;
 

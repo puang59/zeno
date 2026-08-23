@@ -22,7 +22,7 @@ zeno's capabilities are built around small tools that the agent can call when ne
 
 - [x] `write_file` - write or replace the contents of a file
 - [x] `delete_file` - delete a file
-- [ ] `move_file` - move a file to a new location
+- [x] `move_file` - move a file to a new location
 - [ ] `create_directory` - create a new directory
 
 ### Git

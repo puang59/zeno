@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { Tool } from "../../utils/types";
+import type { Tool } from "../../../utils/types";
 
 const readFileSchema = z.object({
   filePath: z.string().describe("The path to the file to be read."),

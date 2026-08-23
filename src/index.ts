@@ -2,11 +2,11 @@ import OpenAI from "openai";
 import pc from "picocolors";
 import cliMD from "cli-markdown";
 
-import { listFilesTool } from "./tools/list-files";
-import { readFileTool } from "./tools/read-file";
-import { searchFilesTool } from "./tools/search-files";
-import { fileExistsTool } from "./tools/file-exists";
-import { getFileInfoTool } from "./tools/get-file-info";
+import { listFilesTool } from "./tools/filesystem/list-files";
+import { readFileTool } from "./tools/filesystem/read-file";
+import { searchFilesTool } from "./tools/filesystem/search-files";
+import { fileExistsTool } from "./tools/filesystem/file-exists";
+import { getFileInfoTool } from "./tools/filesystem/get-file-info";
 import { z } from "zod";
 
 const openai = new OpenAI({

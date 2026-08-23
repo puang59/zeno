@@ -1,4 +1,4 @@
-import type { Tool } from "../../utils/types";
+import type { Tool } from "../../../utils/types";
 import { z } from "zod";
 
 const fileExistsSchema = z.object({

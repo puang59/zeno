@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { Tool } from "../../utils/types";
+import type { Tool } from "../../../utils/types";
 
 const getFileInfoSchema = z.object({
   filePath: z

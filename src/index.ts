@@ -1,13 +1,14 @@
 import OpenAI from "openai";
 import pc from "picocolors";
 import cliMD from "cli-markdown";
+import { z } from "zod";
 
 import { listFilesTool } from "./tools/filesystem/list-files";
 import { readFileTool } from "./tools/filesystem/read-file";
 import { searchFilesTool } from "./tools/filesystem/search-files";
 import { fileExistsTool } from "./tools/filesystem/file-exists";
 import { getFileInfoTool } from "./tools/filesystem/get-file-info";
-import { z } from "zod";
+import { writeFileTool } from "./tools/filesystem/write-file";
 
 const openai = new OpenAI({
   apiKey: process.env.DEEPINFRA_TOKEN,
@@ -20,6 +21,7 @@ const ToolsRegistry = {
   search_files: searchFilesTool,
   file_exists: fileExistsTool,
   get_file_info: getFileInfoTool,
+  write_file: writeFileTool,
 };
 type ToolName = keyof typeof ToolsRegistry;
 

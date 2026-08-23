@@ -93,3 +93,9 @@ zeno's capabilities are built around small tools that the agent can call when ne
 - [ ] `confirm_action` - ask the user to confirm an action
 - [ ] `show_diff` - show proposed file changes before applying them
 - [ ] `rollback_changes` - revert changes made by the agent
+
+---
+
+<p align="center">
+  <small><i>maintained by zeno</i></small>
+</p>

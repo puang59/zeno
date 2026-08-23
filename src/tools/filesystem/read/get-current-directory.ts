@@ -1,4 +1,4 @@
-import type { Tool } from "../../../utils/types";
+import type { Tool } from "../../../../utils/types";
 import { cwd } from "node:process";
 import { z } from "zod";
 

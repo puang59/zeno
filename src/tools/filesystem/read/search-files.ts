@@ -1,5 +1,5 @@
-import type { Tool } from "../../../utils/types";
-import { IGNORED_DIRECTORIES } from "../../../utils/consts";
+import type { Tool } from "../../../../utils/types";
+import { IGNORED_DIRECTORIES } from "../../../../utils/consts";
 import { z } from "zod";
 
 const searchFilesSchema = z.object({

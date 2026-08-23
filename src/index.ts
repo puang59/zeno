@@ -3,16 +3,16 @@ import pc from "picocolors";
 import cliMD from "cli-markdown";
 import { z } from "zod";
 
-import { listFilesTool } from "./tools/filesystem/list-files";
-import { readFileTool } from "./tools/filesystem/read-file";
-import { searchFilesTool } from "./tools/filesystem/search-files";
-import { fileExistsTool } from "./tools/filesystem/file-exists";
-import { getFileInfoTool } from "./tools/filesystem/get-file-info";
+import { listFilesTool } from "./tools/filesystem/read/list-files";
+import { readFileTool } from "./tools/filesystem/read/read-file";
+import { searchFilesTool } from "./tools/filesystem/read/search-files";
+import { fileExistsTool } from "./tools/filesystem/read/file-exists";
+import { getFileInfoTool } from "./tools/filesystem/read/get-file-info";
 import { writeFileTool } from "./tools/filesystem/write/write-file";
 import { deleteFileTool } from "./tools/filesystem/write/delete-file";
 import { moveFileTool } from "./tools/filesystem/write/move-file";
 import { createDirectoryTool } from "./tools/filesystem/write/create-directory";
-import { getCurrentDirectoryTool } from "./tools/filesystem/get-current-directory";
+import { getCurrentDirectoryTool } from "./tools/filesystem/read/get-current-directory";
 
 const openai = new OpenAI({
   apiKey: process.env.DEEPINFRA_TOKEN,
@@ -58,7 +58,7 @@ async function calltool(toolname: ToolName, args: unknown) {
 }
 
 // to avoid sending ToolsRegistry along with execute
-// function, we only send the tool definiations to the LLM
+// function, we only send the tool defininitions to the LLM
 function getToolDefinitions() {
   return Object.values(ToolsRegistry).map((tool) => ({
     type: "function" as const,

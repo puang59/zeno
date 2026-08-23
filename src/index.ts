@@ -9,6 +9,7 @@ import { searchFilesTool } from "./tools/filesystem/search-files";
 import { fileExistsTool } from "./tools/filesystem/file-exists";
 import { getFileInfoTool } from "./tools/filesystem/get-file-info";
 import { writeFileTool } from "./tools/filesystem/write-file";
+import { deleteFileTool } from "./tools/filesystem/delete-file";
 
 const openai = new OpenAI({
   apiKey: process.env.DEEPINFRA_TOKEN,
@@ -16,12 +17,16 @@ const openai = new OpenAI({
 });
 
 const ToolsRegistry = {
+  // read-only
   read_file: readFileTool,
   list_files: listFilesTool,
   search_files: searchFilesTool,
   file_exists: fileExistsTool,
   get_file_info: getFileInfoTool,
+
+  // write-only
   write_file: writeFileTool,
+  delete_file: deleteFileTool,
 };
 type ToolName = keyof typeof ToolsRegistry;
 

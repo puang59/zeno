@@ -18,6 +18,7 @@ import { gitDiffTool } from "./tools/git/git-diff";
 import { gitDiffFileTool } from "./tools/git/git-diff-file";
 import { gitLogTool } from "./tools/git/git-log";
 import { gitShowTool } from "./tools/git/git-show";
+import { gitBlameTool } from "./tools/git/git-blame";
 
 const openai = new OpenAI({
   apiKey: process.env.DEEPINFRA_TOKEN,
@@ -45,6 +46,7 @@ const ToolsRegistry = {
   git_diff_file: gitDiffFileTool,
   git_log: gitLogTool,
   git_show: gitShowTool,
+  git_blame: gitBlameTool,
 };
 type ToolName = keyof typeof ToolsRegistry;
 

@@ -1,6 +1,6 @@
 import type { Tool } from "../../../utils/types";
-import { promisify } from "util";
-import { execFile } from "child_process";
+import { promisify } from "node:util";
+import { execFile } from "node:child_process";
 import { z } from "zod";
 
 const execFileAsync = promisify(execFile);

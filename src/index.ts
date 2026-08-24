@@ -15,6 +15,7 @@ import { createDirectoryTool } from "./tools/filesystem/write/create-directory";
 import { getCurrentDirectoryTool } from "./tools/filesystem/read/get-current-directory";
 import { gitStatusTool } from "./tools/git/git-status";
 import { gitDiffTool } from "./tools/git/git-diff";
+import { gitDiffFileTool } from "./tools/git/git-diff-file";
 
 const openai = new OpenAI({
   apiKey: process.env.DEEPINFRA_TOKEN,
@@ -39,6 +40,7 @@ const ToolsRegistry = {
   // git
   git_status: gitStatusTool,
   git_diff: gitDiffTool,
+  git_diff_file: gitDiffFileTool,
 };
 type ToolName = keyof typeof ToolsRegistry;
 

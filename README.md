@@ -30,7 +30,7 @@ zeno's capabilities are built around small tools that the agent can call when ne
 
 - [x] `git_status` - get the current working tree status
 - [x] `git_diff` - get changes in the working tree
-- [ ] `git_diff_file` - get changes for a specific file
+- [x] `git_diff_file` - get changes for a specific file
 - [ ] `git_log` - view commit history
 - [ ] `git_show` - inspect a specific commit
 - [ ] `git_blame` - find who changed each line and when

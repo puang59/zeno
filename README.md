@@ -33,10 +33,8 @@ zeno's capabilities are built around small tools that the agent can call when ne
 - [x] `git_diff_file` - get changes for a specific file
 - [x] `git_log` - view commit history
 - [x] `git_show` - inspect a specific commit
-- [ ] `git_blame` - find who changed each line and when
-- [ ] `git_branch` - get the current branch
-- [ ] `git_list_branches` - list local and remote branches
-- [ ] `git_show_commit` - inspect the details of a specific commit
+- [x] `git_blame` - find who changed each line and when
+- [x] `git_branch` - get the current branch
 
 ### Code Intelligence
 
